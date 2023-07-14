@@ -1,7 +1,6 @@
 package com.tour.kuma.domain.Keyword.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.valueextraction.UnwrapByDefault;
 import lombok.Getter;
 
 @Entity
