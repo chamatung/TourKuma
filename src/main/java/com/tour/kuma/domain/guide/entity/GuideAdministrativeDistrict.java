@@ -9,6 +9,7 @@ import lombok.Getter;
 public class GuideAdministrativeDistrict {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guideAdministrativeDistrictId;
 
     @ManyToOne(fetch = FetchType.LAZY)

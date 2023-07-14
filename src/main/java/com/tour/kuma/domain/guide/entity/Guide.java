@@ -1,6 +1,7 @@
 package com.tour.kuma.domain.guide.entity;
 
 import com.tour.kuma.domain.nation.entity.Nation;
+import com.tour.kuma.global.util.BooleanToYNConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 public class Guide {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guideId;
     @Column(length = 50)
     private String email;
@@ -31,6 +33,9 @@ public class Guide {
     private Integer experience;
     @Column(length = 255)
     private String specialties;
+
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean crime; //범죄여부 y,n
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nationId")

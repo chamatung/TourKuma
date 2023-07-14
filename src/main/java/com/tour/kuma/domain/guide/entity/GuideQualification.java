@@ -1,8 +1,6 @@
 package com.tour.kuma.domain.guide.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -12,6 +10,7 @@ import java.time.LocalDate;
 public class GuideQualification {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guideQualificationId;
     @Column(length = 50)
     private String qualificationName;

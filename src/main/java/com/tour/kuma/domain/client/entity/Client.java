@@ -2,15 +2,22 @@ package com.tour.kuma.domain.client.entity;
 
 import com.tour.kuma.domain.nation.entity.Nation;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Client {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
     @Column(length = 50)
     private String email;
@@ -25,12 +32,15 @@ public class Client {
     private String address;
     @Column(length = 300)
     private String detailAddress;
-    @Column(length = 255)
-    private String passportNumber;
-    @Column(length = 255)
-    private String foreignRegistNumber;
+    @Column
+    private char foreignYn;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="")
+    private ClientForeign clientForeign;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nationId")
     private Nation nation;
+
 }

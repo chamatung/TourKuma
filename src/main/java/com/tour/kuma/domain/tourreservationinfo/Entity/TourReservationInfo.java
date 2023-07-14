@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class TourReservationInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tourReservationInfoId;
 
     private LocalDate tourReservationInfoDate;

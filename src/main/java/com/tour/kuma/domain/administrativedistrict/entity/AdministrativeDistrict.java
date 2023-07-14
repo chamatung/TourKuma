@@ -1,8 +1,6 @@
 package com.tour.kuma.domain.administrativedistrict.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 @Entity
@@ -10,6 +8,7 @@ import lombok.Getter;
 public class AdministrativeDistrict {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long administrativeDistrictId;
 
     @Column(length = 10)

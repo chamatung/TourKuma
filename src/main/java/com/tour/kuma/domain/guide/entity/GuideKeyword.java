@@ -9,6 +9,7 @@ import lombok.Getter;
 public class GuideKeyword {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guideKeywordId;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,17 +1,16 @@
 package com.tour.kuma.domain.common.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
 public class File {
 
     @Id
+    @GeneratedValue(generator = "fileIdGenerator")
+    @GenericGenerator(name = "fileIdGenerator", strategy = "com.tour.kuma.global.util.FileIdGenerator")
     private Long fileId;
     @Column(length = 50)
     private String fileName;

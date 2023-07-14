@@ -1,8 +1,6 @@
 package com.tour.kuma.domain.Keyword.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.valueextraction.UnwrapByDefault;
 import lombok.Getter;
 
@@ -11,6 +9,7 @@ import lombok.Getter;
 public class Keyword {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long keywordId;
     @Column(length = 255)
     private String keyword;

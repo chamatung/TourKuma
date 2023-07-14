@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class PaymentInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long PaymentInfoId;
     @Column(length = 10)
     private String state;
