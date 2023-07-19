@@ -1,7 +1,8 @@
-package com.tour.kuma.domain.auth;
+package com.tour.kuma.domain.social.service;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -9,7 +10,8 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 import java.util.Map;
 
-public class AuthKakaoServiceImpl implements AuthService{
+@Service
+public class SocialKakaoServiceImpl implements SocialService {
     @Override
     public String getToken(String code) {
         // Kakao OAuth 토큰 엔드포인트 URL
@@ -22,21 +24,20 @@ public class AuthKakaoServiceImpl implements AuthService{
                 .build();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         // Request Body 파라미터
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("grant_type", "authorization_code");
-        requestBody.add("client_id", "나의 개발자 key");
-        requestBody.add("redirect_uri", "localhost:8080/api/v1/client/auth");//인가코드가 redirect된 uri인데 react이면 front인가 ?
+        requestBody.add("client_id", "7179ae74cbd07a526a748fa81d0dc99f");
+        requestBody.add("redirect_uri", "http://localhost:3000/");
         requestBody.add("code", code);
 
         // Request 생성
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         //	<T> ResponseEntity<T> exchange(String url, HttpMethod method, @Nullable HttpEntity<?> requestEntity,
-        //			Class<T> responseType, Object... uriVariables) throws RestClientException;
+        //	Class<T> responseType, Object... uriVariables) throws RestClientException;
         ResponseEntity<Map> response = restTemplate.exchange(tokenEndpoint, HttpMethod.POST, requestEntity, Map.class);
         // 응답 결과 확인
         HttpStatusCode statusCode = response.getStatusCode();
@@ -59,7 +60,7 @@ public class AuthKakaoServiceImpl implements AuthService{
     }
 
     @Override
-    public Map<String, Object> getUserInfo(String accessToken) {
+    public ResponseEntity<Map> getUserInfo(String accessToken) {
         //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
         String reqURL = "https://kapi.kakao.com/v2/user/me";
 
@@ -78,11 +79,12 @@ public class AuthKakaoServiceImpl implements AuthService{
         HttpStatusCode statusCode = response.getStatusCode();
         HttpHeaders responseHeaders = response.getHeaders();
         Map<String, Object> responseBody = response.getBody();
-        String test1 = "";
-        String test = "";
+        Map<String, Object> kakao_account = (Map<String, Object>) responseBody.get("kakao_account");
+        Long id = -1L;
+        String email = "";
         if (statusCode == HttpStatus.OK) {
-            test = (String) responseBody.get("test1");
-            test1 = (String) responseBody.get("test2");
+            id = (Long) responseBody.get("id");
+            email = (String) kakao_account.get("email");
 
             // 유저정보로 보낼지 말지 작업할지 말지
         } else {
@@ -90,6 +92,6 @@ public class AuthKakaoServiceImpl implements AuthService{
             // ...
         }
 
-        return responseBody;
+        return response;
     }
 }
