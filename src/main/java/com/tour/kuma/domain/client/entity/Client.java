@@ -36,11 +36,14 @@ public class Client {
     private char foreignYn;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="")
+    @JoinColumn(name="clientId")
     private ClientForeign clientForeign;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nationId")
     private Nation nation;
 
+    public void addClientForeign(ClientForeign clientForeign) {
+        this.clientForeign = clientForeign;
+    }
 }

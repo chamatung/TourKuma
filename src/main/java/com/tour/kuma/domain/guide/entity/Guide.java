@@ -3,12 +3,16 @@ package com.tour.kuma.domain.guide.entity;
 import com.tour.kuma.domain.nation.entity.Nation;
 import com.tour.kuma.global.util.BooleanToYNConverter;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@Builder
 public class Guide {
 
     @Id
@@ -35,10 +39,12 @@ public class Guide {
     private String specialties;
 
     @Convert(converter = BooleanToYNConverter.class)
-    private Boolean crime; //범죄여부 y,n
+    private Boolean crimeYn; //범죄여부 y,n
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "nationId")
     private Nation nation;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "guide")
+    private List<GuideQualification> guideQualification = new ArrayList<>();
 }

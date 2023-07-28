@@ -38,6 +38,12 @@ implementation 'com.google.code.gson:gson:2.10.1'
 
 // https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter
 implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
+// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+
+// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.1.2'
+implementation 'com.google.code.gson:gson:2.8.9'  // Gson 버전은 최신 버전에 맞게 변경 가능
 }
 
 tasks.named('test') {

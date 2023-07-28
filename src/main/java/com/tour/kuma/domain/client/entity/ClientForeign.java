@@ -25,4 +25,8 @@ public class ClientForeign {
     private String passportNumber;
     @Column(length = 255)
     private String foreignRegistNumber;
+
+    public void addClient(Client client) {
+        this.client = client;
+    }
 }

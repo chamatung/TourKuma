@@ -1,17 +1,35 @@
 package com.tour.kuma.domain.social.service;
 
+import com.tour.kuma.domain.client.entity.Client;
+import com.tour.kuma.domain.client.repository.ClientRepository;
+import com.tour.kuma.domain.social.dto.SocialRegistDTO;
+import com.tour.kuma.domain.social.entity.Social;
+import com.tour.kuma.domain.social.repository.SocialRepository;
+import com.tour.kuma.global.config.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SocialKakaoServiceImpl implements SocialService {
+
+    private final SocialRepository socialRepository;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
+
     @Override
     public String getToken(String code) {
         // Kakao OAuth 토큰 엔드포인트 URL
@@ -49,8 +67,8 @@ public class SocialKakaoServiceImpl implements SocialService {
             accessToken = (String) responseBody.get("access_token");
             refreshToken = (String) responseBody.get("refresh_token");
 
-            // 토큰 처리 또는 추가 작업 수행
-            // ...
+
+
         } else {
             // 에러 처리
             // ...
@@ -59,8 +77,9 @@ public class SocialKakaoServiceImpl implements SocialService {
         return accessToken;
     }
 
+    @Transactional
     @Override
-    public ResponseEntity<Map> getUserInfo(String accessToken) {
+    public MultiValueMap<String, String> getUserInfo(String accessToken) {
         //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
         String reqURL = "https://kapi.kakao.com/v2/user/me";
 
@@ -77,21 +96,47 @@ public class SocialKakaoServiceImpl implements SocialService {
         ResponseEntity<Map> response = restTemplate.exchange(reqURL, HttpMethod.GET, requestEntity, Map.class);
         // 응답 결과 확인
         HttpStatusCode statusCode = response.getStatusCode();
-        HttpHeaders responseHeaders = response.getHeaders();
+//        HttpHeaders responseHeaders = response.getHeaders();
         Map<String, Object> responseBody = response.getBody();
         Map<String, Object> kakao_account = (Map<String, Object>) responseBody.get("kakao_account");
         Long id = -1L;
         String email = "";
+
+        MultiValueMap<String,String> header = new LinkedMultiValueMap<>();
         if (statusCode == HttpStatus.OK) {
             id = (Long) responseBody.get("id");
             email = (String) kakao_account.get("email");
-
-            // 유저정보로 보낼지 말지 작업할지 말지
+            String token = jwtTokenProvider.createToken(id,email,"kakao");
+            if(!socialValidation(id)) {
+                socialRepository.save(SocialRegistDTO.toSocial(id,email,"kakao"));
+                header.add("token", token);
+                header.add("client_status", "소셜회원가입"); // 임시권한이 부여시 프론트단 체크 후 회원가입 페이지로 이동이 필요 해당 토큰은 회원가입 시 다시 전달해줘야함.
+            } else {
+                if(foreignValidation(id)) {
+                    header.add("client_status", "외국인등록");
+                }
+            }
         } else {
-            // 에러 처리
-            // ...
+            throw new RuntimeException("Kakao Login fail");
         }
 
-        return response;
+        return header;
+    }
+
+    private boolean foreignValidation(Long id) {
+        Social social = socialRepository.findBySocialId(id);
+        Client client = social.getClient();
+        if(client.getForeignYn() == 'y') {
+            if(client.getClientForeign() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean socialValidation(Long id) {
+        Social social = socialRepository.findBySocialId(id);
+
+        return social != null;
     }
 }

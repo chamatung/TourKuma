@@ -16,6 +16,8 @@ public class Social {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private Long socialId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,4 +29,8 @@ public class Social {
 
     @Column(length = 10)
     private String socialType;
+
+    public void changeClientId(Client client) {
+
+    }
 }
